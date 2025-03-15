@@ -104,19 +104,19 @@
                             <a class="nav-link" href="{{ url_for('product.featured') }}">Today's Deals</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Mobiles</a>
+                            <a class="nav-link" href="{{ url_for('main.category', category_id=2 ) }}">Mobiles</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Electronics</a>
+                            <a class="nav-link" href="{{ url_for('main.category', category_id=1 ) }}">Electronics</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Fashion</a>
+                            <a class="nav-link" href="{{ url_for('main.category', category_id=6 ) }}">Fashion</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Home & Kitchen</a>
+                            <a class="nav-link" href="{{ url_for('main.category', category_id=4 ) }}">Home & Kitchen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Books</a>
+                            <a class="nav-link" href="{{ url_for('main.category', category_id=5 ) }}">Books</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
