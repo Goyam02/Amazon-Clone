@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Checkout</h1>
+    
+    {% if cart_items %}
+        <div class="row">
+            <!-- Checkout Form -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="mb-3">
+                                <label for="shipping_address" class="form-label">Address</label>
+                                {{ form.shipping_address(class="form-control", id="shipping_address") }}
+                                {% for error in form.shipping_address.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="shipping_city" class="form-label">City</label>
+                                    {{ form.shipping_city(class="form-control", id="shipping_city") }}
+                                    {% for error in form.shipping_city.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="shipping_state" class="form-label">State/Province</label>
+                                    {{ form.shipping_state(class="form-control", id="shipping_state") }}
+                                    {% for error in form.shipping_state.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="shipping_postal_code" class="form-label">Postal Code</label>
+                                    {{ form.shipping_postal_code(class="form-control", id="shipping_postal_code") }}
+                                    {% for error in form.shipping_postal_code.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="shipping_country" class="form-label">Country</label>
+                                    {{ form.shipping_country(class="form-control", id="shipping_country") }}
+                                    {% for error in form.shipping_country.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <h5 class="mb-3">Payment Method</h5>
+                            <div class="mb-3">
+                                {{ form.payment_method(class="form-select", id="payment_method") }}
+                                {% for error in form.payment_method.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="card-fields mb-3">
+                                <div class="mb-3">
+                                    <label for="card_number" class="form-label">Card Number</label>
+                                    {{ form.card_number(class="form-control", id="card_number", placeholder="1234 5678 9012 3456") }}
+                                    {% for error in form.card_number.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="card_expiry" class="form-label">Expiry Date</label>
+                                        {{ form.card_expiry(class="form-control", id="card_expiry", placeholder="MM/YY") }}
+                                        {% for error in form.card_expiry.errors %}
+                                            <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="card_cvv" class="form-label">CVV</label>
+                                        {{ form.card_cvv(class="form-control", id="card_cvv", placeholder="123") }}
+                                        {% for error in form.card_cvv.errors %}
+                                            <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                {{ form.submit(class="btn btn-warning btn-lg") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="col-md-4">
+                <div class="card cart-summary">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Order Summary</h5>
+                        
+                        <div class="mb-3">
+                            {% for item in cart_items %}
+                                <div class="d-flex mb-2">
+                                    <div class="flex-shrink-0">
+                                        <img src="{{ item.product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}" 
+                                             width="50" alt="{{ item.product.name }}">
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">{{ item.product.name }}</h6>
+                                        <small class="text-muted">Qty: {{ item.quantity }}</small>
+                                        <div>
+                                            {% if item.product.discount_price %}
+                                                ₹{{ item.product.discount_price * item.quantity }}
+                                            {% else %}
+                                                ₹{{ item.product.price * item.quantity }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Items ({{ cart_items|length }}):</span>
+                            <span>₹{{ total }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping:</span>
+                            <span>₹0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax:</span>
+                            <span>₹0.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Order Total:</span>
+                            <span class="fw-bold">₹{{ total }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-shopping-cart fa-4x mb-3 text-muted"></i>
+                <h3>Your cart is empty</h3>
+                <p class="mb-4">Add some products to your cart before proceeding to checkout.</p>
+                <a href="{{ url_for('main.index') }}" class="btn btn-warning">Continue Shopping</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentMethodSelect = document.getElementById('payment_method');
+        const cardFields = document.querySelector('.card-fields');
+        
+        // Initial state
+        if (paymentMethodSelect.value !== 'card') {
+            cardFields.style.display = 'none';
+        }
+        
+        // Add change listener
+        paymentMethodSelect.addEventListener('change', function() {
+            if (this.value === 'card') {
+                cardFields.style.display = 'block';
+            } else {
+                cardFields.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

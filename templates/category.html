@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            {% if category.parent %}
+                <li class="breadcrumb-item"><a href="{{ url_for('main.category', category_id=category.parent.id) }}">{{ category.parent.name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        </ol>
+    </nav>
+    
+    <h1 class="mb-4">{{ category.name }}</h1>
+    
+    {% if category.description %}
+        <p class="lead">{{ category.description }}</p>
+    {% endif %}
+    
+    <!-- Display subcategories if any -->
+    {% if subcategories %}
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="m-0">Subcategories</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for subcat in subcategories %}
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{{ url_for('main.category', category_id=subcat.id) }}" class="text-decoration-none">
+                                <div class="card h-100 category-card">
+                                    <img src="{{ subcat.image_url or url_for('static', filename='images/category-placeholder.jpg') }}" 
+                                         class="card-img-top category-image" alt="{{ subcat.name }}">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">{{ subcat.name }}</h5>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Display products -->
+    <div class="row">
+        {% for product in products.items %}
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card h-100 product-card">
+                    <a href="{{ url_for('product.product_detail', product_id=product.id) }}">
+                        <img src="{{ product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}" 
+                             class="card-img-top product-image" alt="{{ product.name }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title product-title">
+                            <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+                        <div class="rating mb-2">
+                            {% set avg_rating = product.avg_rating() %}
+                            {% for i in range(5) %}
+                                {% if i < avg_rating|int %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="price-container">
+                            {% if product.discount_price %}
+                                <span class="original-price text-decoration-line-through">₹{{ product.price }}</span>
+                                <span class="current-price">₹{{ product.discount_price }}</span>
+                                {% set discount = ((product.price - product.discount_price) / product.price * 100)|int %}
+                                <span class="discount-badge">{{ discount }}% off</span>
+                            {% else %}
+                                <span class="current-price">₹{{ product.price }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-warning btn-sm w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+                                Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No products available in this category.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if products.pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if products.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.category', category_id=category.id, page=products.prev_num) }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+                
+                {% for page_num in products.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == products.page %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('main.category', category_id=category.id, page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.category', category_id=category.id, page=products.next_num) }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

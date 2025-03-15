@@ -1,0 +1,24 @@
+/* Placeholder for sample images */
+.placeholder-image {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-weight: bold;
+}
+
+.product-placeholder {
+    height: 200px;
+}
+
+.category-placeholder {
+    height: 150px;
+}
+
+.banner-placeholder {
+    height: 400px;
+    width: 100%;
+    font-size: 2rem;
+}

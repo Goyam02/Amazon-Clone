@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            {% if product.categories %}
+            <li class="breadcrumb-item"><a href="{{ url_for('main.category', category_id=product.categories[0].id) }}">{{ product.categories[0].name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row mb-5">
+        <!-- Product Image -->
+        <div class="col-md-5 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid product-detail-image">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Info -->
+        <div class="col-md-7">
+            <h1 class="mb-2">{{ product.name }}</h1>
+            <p class="text-muted">Brand: {{ product.brand }}</p>
+            
+            <!-- Rating -->
+            <div class="mb-3">
+                {% set avg_rating = product.avg_rating() %}
+                {% for i in range(5) %}
+                    {% if i < avg_rating|int %}
+                        <i class="fas fa-star text-warning"></i>
+                    {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                        <i class="fas fa-star-half-alt text-warning"></i>
+                    {% else %}
+                        <i class="far fa-star text-warning"></i>
+                    {% endif %}
+                {% endfor %}
+                <span class="ms-2">{{ avg_rating|round(1) }} out of 5</span>
+                <span class="ms-2">({{ product.reviews.count() }} reviews)</span>
+            </div>
+            
+            <hr>
+            
+            <!-- Price -->
+            <div class="mb-3">
+                {% if product.discount_price %}
+                    <span class="product-detail-original-price">₹{{ product.price }}</span>
+                    <span class="product-detail-price">₹{{ product.discount_price }}</span>
+                    {% set discount = ((product.price - product.discount_price) / product.price * 100)|int %}
+                    <span class="product-detail-discount">{{ discount }}% off</span>
+                {% else %}
+                    <span class="product-detail-price">₹{{ product.price }}</span>
+                {% endif %}
+            </div>
+            
+            <!-- Availability -->
+            <div class="mb-3">
+                {% if product.stock > 10 %}
+                    <span class="text-success"><i class="fas fa-check-circle"></i> In Stock</span>
+                {% elif product.stock > 0 %}
+                    <span class="text-warning"><i class="fas fa-exclamation-circle"></i> Only {{ product.stock }} left in stock</span>
+                {% else %}
+                    <span class="text-danger"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                {% endif %}
+            </div>
+            
+            <!-- Add to Cart form -->
+            <div class="mb-4">
+                <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    {{ cart_form.product_id(value=product.id) }}
+                    
+                    <div class="input-group mb-3" style="max-width: 200px;">
+                        <button type="button" class="btn btn-outline-secondary decrement-btn">-</button>
+                        {{ cart_form.quantity(class="form-control text-center quantity-input", min=1, max=product.stock, value=1) }}
+                        <button type="button" class="btn btn-outline-secondary increment-btn">+</button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning w-100 mb-2" {% if product.stock <= 0 %}disabled{% endif %}>
+                        <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Product description -->
+            <div class="product-description">
+                <h5>About this item</h5>
+                <p>{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reviews section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h4>Customer Reviews</h4>
+                </div>
+                <div class="card-body">
+                    {% if reviews %}
+                        {% for review in reviews %}
+                            <div class="review-card">
+                                <div class="d-flex justify-content-between">
+                                    <h5>{{ review.author.username }}</h5>
+                                    <small class="text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</small>
+                                </div>
+                                <div class="mb-2">
+                                    {% for i in range(5) %}
+                                        {% if i < review.rating %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <p>{{ review.comment }}</p>
+                                <hr>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No reviews yet. Be the first to review this product!</p>
+                    {% endif %}
+                    
+                    <!-- Review form for logged in users -->
+                    {% if review_form %}
+                        <div class="mt-4">
+                            <h5>Write a Review</h5>
+                            <form action="{{ url_for('product.add_review', product_id=product.id) }}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label">Rating</label>
+                                    {{ review_form.rating(class="form-select") }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Comment</label>
+                                    {{ review_form.comment(class="form-control", rows=3) }}
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </form>
+                        </div>
+                    {% elif current_user.is_authenticated %}
+                        <div class="alert alert-info mt-4">
+                            You've already reviewed this product.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mt-4">
+                            <a href="{{ url_for('auth.login', next=request.path) }}">Sign in</a> to write a review.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related products -->
+    {% if related_products %}
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-4">Related Products</h3>
+                <div class="row">
+                    {% for related in related_products %}
+                        <div class="col-md-3 col-sm-6 mb-4">
+                            <div class="card h-100 product-card">
+                                <a href="{{ url_for('product.product_detail', product_id=related.id) }}">
+                                    <img src="{{ related.image_url or url_for('static', filename='images/product-placeholder.jpg') }}" 
+                                         class="card-img-top product-image" alt="{{ related.name }}">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title product-title">
+                                        <a href="{{ url_for('product.product_detail', product_id=related.id) }}" class="text-decoration-none text-dark">
+                                            {{ related.name }}
+                                        </a>
+                                    </h5>
+                                    <div class="rating mb-2">
+                                        {% set avg_rating = related.avg_rating() %}
+                                        {% for i in range(5) %}
+                                            {% if i < avg_rating|int %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                                                <i class="fas fa-star-half-alt text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="price-container">
+                                        {% if related.discount_price %}
+                                            <span class="original-price text-decoration-line-through">₹{{ related.price }}</span>
+                                            <span class="current-price">₹{{ related.discount_price }}</span>
+                                            {% set discount = ((related.price - related.discount_price) / related.price * 100)|int %}
+                                            <span class="discount-badge">{{ discount }}% off</span>
+                                        {% else %}
+                                            <span class="current-price">₹{{ related.price }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

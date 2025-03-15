@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}Amazon.in: Online Shopping India - Shop Online for Mobiles, Books, Watches, Shoes and More{% endblock %}
+
+{% block content %}
+    <!-- Main banner carousel -->
+    <div id="mainCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            {% for banner in banners %}
+                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="{{ loop.index0 }}"
+                    {% if loop.first %}class="active" aria-current="true"{% endif %}
+                    aria-label="Slide {{ loop.index }}"></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+            {% for banner in banners %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <a href="{{ banner.link_url or '#' }}">
+                        <img src="{{ banner.image_url }}" class="d-block w-100" alt="{{ banner.title }}">
+                    </a>
+                    {% if banner.title or banner.description %}
+                        <div class="carousel-caption d-none d-md-block">
+                            {% if banner.title %}<h5>{{ banner.title }}</h5>{% endif %}
+                            {% if banner.description %}<p>{{ banner.description }}</p>{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <!-- Default banner if no banners in database -->
+                <div class="carousel-item active">
+                    <img src="{{ url_for('static', filename='images/default-banner.jpg') }}" class="d-block w-100" alt="Shop at Amazon">
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Featured products section -->
+    <section class="mb-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="m-0">Today's Deals</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for product in featured_products %}
+                        <div class="col-md-3 col-sm-6 mb-4">
+                            <div class="card h-100 product-card">
+                                <a href="{{ url_for('product.product_detail', product_id=product.id) }}">
+                                    <img src="{{ product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}"
+                                         class="card-img-top product-image" alt="{{ product.name }}">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title product-title">
+                                        <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                            {{ product.name }}
+                                        </a>
+                                    </h5>
+                                    <div class="rating mb-2">
+                                        {% set avg_rating = product.avg_rating() %}
+                                        {% for i in range(5) %}
+                                            {% if i < avg_rating|int %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                                                <i class="fas fa-star-half-alt text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="price-container">
+                                        {% if product.discount_price %}
+                                            <span class="original-price text-decoration-line-through">₹{{ product.price }}</span>
+                                            <span class="current-price">₹{{ product.discount_price }}</span>
+                                            {% set discount = ((product.price - product.discount_price) / product.price * 100)|int %}
+                                            <span class="discount-badge">{{ discount }}% off</span>
+                                        {% else %}
+                                            <span class="current-price">₹{{ product.price }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-warning btn-sm w-100">Add to Cart</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('product.featured') }}" class="btn btn-outline-primary">See all deals</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category sections -->
+    {% for section in category_sections %}
+        <section class="mb-5">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="m-0">{{ section.category.name }}</h5>
+                    <a href="{{ url_for('main.category', category_id=section.category.id) }}" class="btn btn-sm btn-light">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for product in section.products %}
+                            <div class="col-md-3 col-sm-6 mb-4">
+                                <div class="card h-100 product-card">
+                                    <a href="{{ url_for('product.product_detail', product_id=product.id) }}">
+                                        <img src="{{ product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}"
+                                            class="card-img-top product-image" alt="{{ product.name }}">
+                                    </a>
+                                    <div class="card-body">
+                                        <h5 class="card-title product-title">
+                                            <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                                {{ product.name }}
+                                            </a>
+                                        </h5>
+                                        <div class="rating mb-2">
+                                            {% set avg_rating = product.avg_rating() %}
+                                            {% for i in range(5) %}
+                                                {% if i < avg_rating|int %}
+                                                    <i class="fas fa-star text-warning"></i>
+                                                {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                                {% else %}
+                                                    <i class="far fa-star text-warning"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="price-container">
+                                            {% if product.discount_price %}
+                                                <span class="original-price text-decoration-line-through">₹{{ product.price }}</span>
+                                                <span class="current-price">₹{{ product.discount_price }}</span>
+                                                {% set discount = ((product.price - product.discount_price) / product.price * 100)|int %}
+                                                <span class="discount-badge">{{ discount }}% off</span>
+                                            {% else %}
+                                                <span class="current-price">₹{{ product.price }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-top-0">
+                                        <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-warning btn-sm w-100">Add to Cart</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endfor %}
+
+    <!-- Categories grid section -->
+    <section class="mb-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="m-0">Shop by Category</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for category in categories %}
+                        <div class="col-md-3 col-sm-6 mb-4">
+                            <div class="card h-100 category-card">
+                                <a href="{{ url_for('main.category', category_id=category.id) }}">
+                                    <img src="{{ category.image_url or url_for('static', filename='images/category-placeholder.jpg') }}"
+                                         class="card-img-top category-image" alt="{{ category.name }}">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">
+                                        <a href="{{ url_for('main.category', category_id=category.id) }}" class="text-decoration-none text-dark">
+                                            {{ category.name }}
+                                        </a>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

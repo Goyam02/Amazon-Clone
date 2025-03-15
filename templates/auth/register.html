@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="auth-container">
+            <div class="auth-logo text-center mb-4">
+                <img src="{{ url_for('static', filename='images/amazon-logo.png') }}" alt="Amazon" height="50">
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Create account</h4>
+
+                    <form method="post">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            {{ form.username(class="form-control", id="username") }}
+                            {% for error in form.username.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            {{ form.email(class="form-control", id="email") }}
+                            {% for error in form.email.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            {{ form.password(class="form-control", id="password", placeholder="At least 8 characters") }}
+                            {% for error in form.password.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Re-enter password</label>
+                            {{ form.confirm_password(class="form-control", id="confirm_password") }}
+                            {% for error in form.confirm_password.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-warning") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-3 text-center">
+                <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Account - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Your Account</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('auth.profile') }}" class="text-decoration-none">Profile</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none">Orders</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none">Addresses</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none">Payment Methods</a></li>
+                        <li class="mb-2"><a href="{{ url_for('auth.logout') }}" class="text-decoration-none">Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">Your Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {{ form.hidden_tag() }}
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">First Name</label>
+                                {{ form.first_name(class="form-control", id="first_name") }}
+                                {% for error in form.first_name.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                {{ form.last_name(class="form-control", id="last_name") }}
+                                {% for error in form.last_name.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            {{ form.address(class="form-control", id="address") }}
+                            {% for error in form.address.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">City</label>
+                                {{ form.city(class="form-control", id="city") }}
+                                {% for error in form.city.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="state" class="form-label">State/Province</label>
+                                {{ form.state(class="form-control", id="state") }}
+                                {% for error in form.state.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="postal_code" class="form-label">Postal Code</label>
+                                {{ form.postal_code(class="form-control", id="postal_code") }}
+                                {% for error in form.postal_code.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="country" class="form-label">Country</label>
+                                {{ form.country(class="form-control", id="country") }}
+                                {% for error in form.country.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            {{ form.phone(class="form-control", id="phone") }}
+                            {% for error in form.phone.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <p class="mb-0"><strong>Email:</strong> {{ current_user.email }}</p>
+                            <small class="text-muted">Email cannot be changed.</small>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            {{ form.submit(class="btn btn-warning") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

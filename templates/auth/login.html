@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="auth-container">
+            <div class="auth-logo text-center mb-4">
+                <img src="{{ url_for('static', filename='images/amazon-logo.png') }}" alt="Amazon" height="50">
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Sign In</h4>
+
+                    <form method="post">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            {{ form.email(class="form-control", id="email") }}
+                            {% for error in form.email.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            {{ form.password(class="form-control", id="password") }}
+                            {% for error in form.password.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.remember_me(class="form-check-input", id="remember_me") }}
+                            <label class="form-check-label" for="remember_me">Keep me signed in</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-warning") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <div class="divider d-flex align-items-center my-4">
+                    <p class="text-center fw-bold mx-3 mb-0">New to Amazon?</p>
+                </div>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-secondary w-100">Create your Amazon account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
