@@ -59,16 +59,26 @@ def seed_database():
 
         print("Creating categories...")
         # Create sample categories
+        # categories = [
+        #     Category(name="Electronics", description="Electronic devices and gadgets"),
+        #     Category(name="Mobiles", description="Smartphones and mobile accessories"),
+        #     Category(name="Computers", description="Laptops, desktops and accessories"),
+        #     Category(name="Home & Kitchen", description="Appliances and kitchen gadgets"),
+        #     Category(name="Books", description="Books in various genres"),
+        #     Category(name="Clothing", description="Men's, women's and kids clothing"),
+        #     Category(name="Sports", description="Sports equipment and fitness gear"),
+        #     Category(name="Toys & Games", description="Toys and games for all ages")
+        # ]
         categories = [
-            Category(name="Electronics", description="Electronic devices and gadgets"),
-            Category(name="Mobiles", description="Smartphones and mobile accessories"),
-            Category(name="Computers", description="Laptops, desktops and accessories"),
-            Category(name="Home & Kitchen", description="Appliances and kitchen gadgets"),
-            Category(name="Books", description="Books in various genres"),
-            Category(name="Clothing", description="Men's, women's and kids clothing"),
-            Category(name="Sports", description="Sports equipment and fitness gear"),
-            Category(name="Toys & Games", description="Toys and games for all ages")
-        ]
+    Category(name="Electronics", description="Electronic devices and gadgets", image_url="/static/images/categories/electronics.jpg"),
+    Category(name="Mobiles", description="Smartphones and mobile accessories", image_url="/static/images/categories/mobiles.jpg"),
+    Category(name="Computers", description="Laptops, desktops and accessories", image_url="/static/images/categories/computers.jpg"),
+    Category(name="Home & Kitchen", description="Appliances and kitchen gadgets", image_url="/static/images/categories/home_kitchen.jpg"),
+    Category(name="Books", description="Books in various genres", image_url="/static/images/categories/books.jpg"),
+    Category(name="Clothing", description="Men's, women's and kids clothing", image_url="/static/images/categories/clothing.jpg"),
+    Category(name="Sports", description="Sports equipment and fitness gear", image_url="/static/images/categories/sports.jpg"),
+    Category(name="Toys & Games", description="Toys and games for all ages", image_url="/static/images/categories/toys_games.jpg")
+]
 
         # Create subcategories
         subcategories = [
