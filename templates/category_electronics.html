@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}Electronics - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Electronics</li>
+        </ol>
+    </nav>
+    
+    <!-- Electronics Hero Banner -->
+    <div class="card mb-4">
+        <div class="card-body p-0">
+            <img src="{{ url_for('static', filename='images/electronics-banner.jpg') }}" alt="Electronics" class="img-fluid w-100" style="max-height: 300px; object-fit: cover;">
+            <div class="card-img-overlay d-flex flex-column justify-content-center">
+                <h1 class="text-white display-4 fw-bold" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">Electronics</h1>
+                <p class="text-white lead" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Discover the latest gadgets and tech</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top Electronics Subcategories -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="m-0">Popular Categories</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for subcat in subcategories %}
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="{{ url_for('main.category', category_id=subcat.id) }}" class="text-decoration-none">
+                            <div class="card h-100 category-card">
+                                <img src="{{ subcat.image_url or url_for('static', filename='images/category-placeholder.jpg') }}" 
+                                     class="card-img-top category-image" alt="{{ subcat.name }}">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ subcat.name }}</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Featured Electronics -->
+    <div class="card mb-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="m-0">Featured Electronics</h5>
+            <a href="{{ url_for('product.featured') }}" class="btn btn-sm btn-outline-primary">View All Deals</a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for product in featured_products %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="ribbon-wrapper" style="position: absolute; top: 0; right: 0; z-index: 1;">
+                                {% if product.discount_price %}
+                                    {% set discount = ((product.price - product.discount_price) / product.price * 100)|int %}
+                                    <div class="ribbon bg-danger text-white" style="padding: 0.25rem 1rem; transform: rotate(45deg) translateX(1.5rem) translateY(-0.5rem);">
+                                        {{ discount }}% off
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <a href="{{ url_for('product.product_detail', product_id=product.id) }}">
+                                <img src="{{ product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}" 
+                                     class="card-img-top product-image" alt="{{ product.name }}">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title product-title">
+                                    <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                        {{ product.name }}
+                                    </a>
+                                </h5>
+                                <p class="text-muted small mb-1">{{ product.brand }}</p>
+                                <div class="rating mb-2">
+                                    {% set avg_rating = product.avg_rating() %}
+                                    {% for i in range(5) %}
+                                        {% if i < avg_rating|int %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <small class="text-muted ms-1">({{ product.reviews.count() }})</small>
+                                </div>
+                                <div class="price-container">
+                                    {% if product.discount_price %}
+                                        <span class="original-price text-decoration-line-through">₹{{ product.price }}</span>
+                                        <span class="current-price">₹{{ product.discount_price }}</span>
+                                    {% else %}
+                                        <span class="current-price">₹{{ product.price }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if product.stock <= 5 and product.stock > 0 %}
+                                    <div class="text-danger small mt-1">Only {{ product.stock }} left in stock!</div>
+                                {% elif product.stock > 0 %}
+                                    <div class="text-success small mt-1">In Stock</div>
+                                {% else %}
+                                    <div class="text-danger small mt-1">Out of Stock</div>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-warning btn-sm w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+                                        <i class="fas fa-shopping-cart me-1"></i> Add to Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Best Sellers -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="m-0">Best Sellers in Electronics</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for product in best_sellers %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="position-absolute top-0 start-0 p-2">
+                                <span class="badge bg-danger">Top Seller</span>
+                            </div>
+                            <a href="{{ url_for('product.product_detail', product_id=product.id) }}">
+                                <img src="{{ product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}" 
+                                     class="card-img-top product-image" alt="{{ product.name }}">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title product-title">
+                                    <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                        {{ product.name }}
+                                    </a>
+                                </h5>
+                                <p class="text-muted small mb-1">{{ product.brand }}</p>
+                                <div class="rating mb-2">
+                                    {% set avg_rating = product.avg_rating() %}
+                                    {% for i in range(5) %}
+                                        {% if i < avg_rating|int %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <small class="text-muted ms-1">({{ product.reviews.count() }})</small>
+                                </div>
+                                <div class="price-container">
+                                    {% if product.discount_price %}
+                                        <span class="original-price text-decoration-line-through">₹{{ product.price }}</span>
+                                        <span class="current-price">₹{{ product.discount_price }}</span>
+                                    {% else %}
+                                        <span class="current-price">₹{{ product.price }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-warning btn-sm w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+                                        <i class="fas fa-shopping-cart me-1"></i> Add to Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Electronics Brand Showcase -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="m-0">Top Brands</h5>
+        </div>
+        <div class="card-body">
+            <div class="row justify-content-center">
+                <div class="col-md-2 col-4 mb-3 text-center">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/apple.png') }}" alt="Apple" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3 text-center">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/samsung.png') }}" alt="Samsung" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3 text-center">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/sony.png') }}" alt="Sony" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3 text-center">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/dell.png') }}" alt="Dell" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3 text-center">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/lg.png') }}" alt="LG" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tech News & Reviews Card -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="m-0">Tech News & Guides</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Best Budget Smartphones of 2025</h5>
+                            <p class="card-text text-muted">Find the perfect budget-friendly smartphone with great features.</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">How to Choose the Right Laptop</h5>
+                            <p class="card-text text-muted">A comprehensive guide to selecting your next laptop.</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Smart Home Essentials</h5>
+                            <p class="card-text text-muted">Transform your home with these must-have smart devices.</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

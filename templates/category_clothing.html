@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}Clothing - Amazon.in Clone{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Clothing</li>
+        </ol>
+    </nav>
+    
+    <!-- Clothing Hero Banner -->
+    <div class="card mb-4">
+        <div class="card-body p-0">
+            <img src="{{ url_for('static', filename='images/clothing-banner.jpg') }}" alt="Clothing" class="img-fluid w-100" style="max-height: 300px; object-fit: cover;">
+            <div class="card-img-overlay d-flex flex-column justify-content-center">
+                <h1 class="text-white display-4 fw-bold" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">Clothing & Fashion</h1>
+                <p class="text-white lead" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Discover the latest trends</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fashion Categories -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 bg-light text-center">
+                <div class="card-body">
+                    <a href="#" class="text-decoration-none">
+                        <img src="{{ url_for('static', filename='images/category-men.jpg') }}" alt="Men's Fashion" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        <h5 class="card-title">Men's Fashion</h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 bg-light text-center">
+                <div class="card-body">
+                    <a href="#" class="text-decoration-none">
+                        <img src="{{ url_for('static', filename='images/category-women.jpg') }}" alt="Women's Fashion" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        <h5 class="card-title">Women's Fashion</h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 bg-light text-center">
+                <div class="card-body">
+                    <a href="#" class="text-decoration-none">
+                        <img src="{{ url_for('static', filename='images/category-kids.jpg') }}" alt="Kids' Fashion" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        <h5 class="card-title">Kids' Fashion</h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 bg-light text-center">
+                <div class="card-body">
+                    <a href="#" class="text-decoration-none">
+                        <img src="{{ url_for('static', filename='images/category-accessories.jpg') }}" alt="Accessories" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        <h5 class="card-title">Accessories</h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Current Season -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Summer Collection 2025</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="lead">Explore our latest summer collection with breathable fabrics and vibrant colors.</p>
+                    <div class="row">
+                        {% for product in featured_products[:4] %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100 product-card">
+                                    <div class="position-absolute top-0 end-0 p-2">
+                                        <span class="badge bg-success">New Arrival</span>
+                                    </div>
+                                    <a href="{{ url_for('product.product_detail', product_id=product.id) }}">
+                                        <img src="{{ product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}" 
+                                             class="card-img-top product-image" alt="{{ product.name }}">
+                                    </a>
+                                    <div class="card-body">
+                                        <h5 class="card-title product-title">
+                                            <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                                {{ product.name }}
+                                            </a>
+                                        </h5>
+                                        <div class="price-container">
+                                            {% if product.discount_price %}
+                                                <span class="original-price text-decoration-line-through">₹{{ product.price }}</span>
+                                                <span class="current-price">₹{{ product.discount_price }}</span>
+                                            {% else %}
+                                                <span class="current-price">₹{{ product.price }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="#" class="btn btn-outline-primary">Shop All Summer Collection</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 bg-light">
+                        <div class="card-body text-center">
+                            <img src="{{ url_for('static', filename='images/summer-collection.jpg') }}" alt="Summer Collection" class="img-fluid rounded mb-3" style="max-height: 300px;">
+                            <h4>Summer Sale</h4>
+                            <p class="text-danger fw-bold">Up to 50% Off</p>
+                            <p>Limited time offer on selected items</p>
+                            <a href="#" class="btn btn-danger">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Featured Clothing Products -->
+    <div class="card mb-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="m-0">Top Deals in Fashion</h5>
+            <a href="{{ url_for('product.featured') }}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for product in best_sellers %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="ribbon-wrapper" style="position: absolute; top: 0; right: 0; z-index: 1;">
+                                {% if product.discount_price %}
+                                    {% set discount = ((product.price - product.discount_price) / product.price * 100)|int %}
+                                    <div class="ribbon bg-danger text-white" style="padding: 0.25rem 1rem; transform: rotate(45deg) translateX(1.5rem) translateY(-0.5rem);">
+                                        {{ discount }}% off
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <a href="{{ url_for('product.product_detail', product_id=product.id) }}">
+                                <img src="{{ product.image_url or url_for('static', filename='images/product-placeholder.jpg') }}" 
+                                     class="card-img-top product-image" alt="{{ product.name }}">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title product-title">
+                                    <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                        {{ product.name }}
+                                    </a>
+                                </h5>
+                                <p class="text-muted small mb-1">{{ product.brand }}</p>
+                                <div class="rating mb-2">
+                                    {% set avg_rating = product.avg_rating() %}
+                                    {% for i in range(5) %}
+                                        {% if i < avg_rating|int %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% elif avg_rating|int == i and (avg_rating - avg_rating|int) >= 0.5 %}
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <small class="text-muted ms-1">({{ product.reviews.count() }})</small>
+                                </div>
+                                <div class="price-container">
+                                    {% if product.discount_price %}
+                                        <span class="original-price text-decoration-line-through">₹{{ product.price }}</span>
+                                        <span class="current-price">₹{{ product.discount_price }}</span>
+                                    {% else %}
+                                        <span class="current-price">₹{{ product.price }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-warning btn-sm w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+                                        <i class="fas fa-shopping-cart me-1"></i> Add to Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fashion Tips & Blog -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="m-0">Fashion Tips & Style Guides</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='images/fashion-blog-1.jpg') }}" class="card-img-top" alt="Fashion Blog" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">Summer Fashion Trends 2025</h5>
+                            <p class="card-text text-muted">Explore the hottest trends for this summer season.</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='images/fashion-blog-2.jpg') }}" class="card-img-top" alt="Fashion Blog" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">How to Build a Capsule Wardrobe</h5>
+                            <p class="card-text text-muted">Essential pieces that work together for any occasion.</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='images/fashion-blog-3.jpg') }}" class="card-img-top" alt="Fashion Blog" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">Sustainable Fashion Choices</h5>
+                            <p class="card-text text-muted">Make eco-friendly choices without sacrificing style.</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fashion Brands -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="m-0">Popular Brands</h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/levis.png') }}" alt="Levi's" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/zara.png') }}" alt="Zara" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/adidas.png') }}" alt="Adidas" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/nike.png') }}" alt="Nike" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/gap.png') }}" alt="GAP" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="p-3 border rounded">
+                        <img src="{{ url_for('static', filename='images/brands/puma.png') }}" alt="Puma" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
