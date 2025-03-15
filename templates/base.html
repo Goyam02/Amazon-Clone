@@ -23,7 +23,17 @@
                     <i class="fas fa-map-marker-alt"></i>
                     <div class="d-inline-block">
                         <small>Delivering to</small>
-                        <div class="fw-bold">Mumbai 400001</div>
+                        <!-- <div class="fw-bold">Mumbai 400001</div> -->
+                         <div class = "fw-bold">
+                            {% if current_user.is_authenticated and current_user.city %}
+                                {{ current_user.city }}  {{ current_user.postal_code }}
+                            {% elif current_user is authenticated %}
+                            <a href="{{ url_for('auth.profile') }}" class="text-warning text-decoration-none">Add Address</a>
+                            {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="text-warning text-decoration-none">Sign in to add address</a>
+                            {% endif %}
+
+                         </div>
                     </div>
                 </div>
 
