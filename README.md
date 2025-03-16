@@ -139,8 +139,7 @@ We welcome contributions! Follow these steps:
 ---
 
 ## 📜 License
-This project is licensed under the **MIT License**. See the `LICENSE` file for details.
-
+This project is licensed under the **MIT License**. See the [`LICENSE`](https://github.com/Goyam02/Amazon-Clone/blob/master/LICENSE) file for details.
 ---
 
 ## 💬 Contact
