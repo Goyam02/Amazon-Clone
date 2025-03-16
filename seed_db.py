@@ -256,7 +256,7 @@ def seed_database():
             Banner(
                 title="Great Indian Festival",
                 description="Huge discounts on electronics, fashion and more!",
-                image_url="/static/images/banners/default-banner.jpg",
+                image_url="/static/images/banners/gif-banner.jpg",
                 link_url="#",
                 position=1,
                 is_active=True
@@ -264,7 +264,7 @@ def seed_database():
             Banner(
                 title="New iPhone Launch",
                 description="Get the latest iPhone with exciting offers!",
-                image_url="/static/images/banners/default-banner.jpg",
+                image_url="/static/images/banners/iphone-banner.jpg",
                 link_url="#",
                 position=2,
                 is_active=True
@@ -272,7 +272,7 @@ def seed_database():
             Banner(
                 title="Books Sale",
                 description="Up to 50% off on bestselling books!",
-                image_url="/static/images/banners/default-banner.jpg",
+                image_url="/static/images/banners/books-banner.jpg",
                 link_url="#",
                 position=3,
                 is_active=True
