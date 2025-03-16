@@ -1,86 +1,155 @@
-# Amazon.in Clone
+# 🛒 Amazon Clone
 
-A clone of the Amazon India website built with Flask, SQLAlchemy and WTForms.
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white) ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white) ![Render](https://img.shields.io/badge/Render-%236DA3EC.svg?style=for-the-badge&logo=render&logoColor=white)
 
-## Features
+Amazon Clone is a **full-fledged e-commerce web application** built using **Flask**, featuring user authentication, product management, cart functionality, and secure checkout. It mimics key features of Amazon to provide a seamless shopping experience.
 
-- User authentication (register, login, profile management)
-- Product browsing by category
-- Product search functionality
-- Product detail pages with reviews
-- Shopping cart
-- Checkout process
-- Responsive design similar to Amazon India
+## 🌟 Features
 
-## Tech Stack
+✅ **User Authentication** - Register/Login with secure password hashing<br>
+✅ **Product Catalog** - Browse products with categories & search<br>
+✅ **Shopping Cart** - Add/remove items & manage orders<br>
+✅ **Secure Checkout** - Place orders with stored details<br>
+✅ **User Reviews** - Allow customers to leave feedback
+✅ **Pagination** - Products displayed with paginated views<br>
+✅ **CSRF Protection** - Security implemented for safe transactions<br>
+✅ **Mobile Responsive** - Fully responsive design with Bootstrap<br>
+✅ **Admin Panel** - Manage products & users (Future update!)<br>
 
-- **Backend**: Flask, SQLAlchemy, WTForms
-- **Frontend**: HTML, CSS, JavaScript, Bootstrap 5
-- **Database**: SQLite (can be easily changed to another database)
+---
 
-## Setup Instructions
+## 📸 Screenshots
 
-1. Clone the repository:
+| Home Page | Product Details | Shopping Cart |
+|-----------|----------------|---------------|
+| ![Home Page](static/screenshots/home.png) | ![Product Details](static/screenshots/product_detail.png) | ![Shopping Cart](static/screenshots/cart.png) |
+
+*More screenshots available in the `/static/screenshots/` directory!*
+
+---
+
+## 🛠 Tech Stack
+
+| **Technology** | **Usage** |
+|--------------|-------------|
+| **Flask** | Backend framework |
+| **Jinja2** | Templating engine |
+| **SQLAlchemy** | Database |
+| **Bootstrap** | Frontend styling |
+| **JavaScript** | Dynamic UI interactions |
+| **Render** | Deployment |
+
+---
+
+## 🚀 Installation & Setup
+
+### 1️⃣ Clone the Repository
 ```bash
-git clone <repository-url>
-cd amazon-clone
+git clone https://github.com/Goyam02/Amazon-Clone.git
+cd Amazon-Clone
 ```
 
-2. Create and activate a virtual environment:
+### 2️⃣ Create Virtual Environment & Install Dependencies
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
 pip install -r requirements.txt
 ```
 
-4. Initialize the database:
+### 3️⃣ Set Up the Database
 ```bash
-python seed_db.py
+python seed_db.py  # Seeds the database with sample products
 ```
 
-5. Run the application:
+### 4️⃣ Run the Application
 ```bash
 python app.py
 ```
+Your application will be live at `http://127.0.0.1:5000/` 🎉
 
-6. Visit http://localhost:5000 in your browser
+---
 
-## Sample Users
+## 🌐 Deployment (Render)
 
-The seed script creates two users:
+### 1️⃣ Install Gunicorn
+```bash
+pip install gunicorn
+```
 
-1. Admin User:
-   - Email: admin@example.com
-   - Password: admin123
+### 2️⃣ Create `Procfile`
+```plaintext
+gunicorn -w 4 -b 0.0.0.0:8000 app:create_app()
+```
 
-2. Regular User:
-   - Email: user@example.com
-   - Password: user123
+### 3️⃣ Deploy on Render
+- Sign up on **[Render](https://render.com/)**
+- Create a new **Web Service**
+- Connect your GitHub repository
+- Set the **Build Command**: `pip install -r requirements.txt`
+- Set the **Start Command**: `gunicorn app:create_app()`
+- Click **Deploy** 🚀
 
-## Project Structure
+---
 
-- `app.py`: Main application file
-- `config.py`: Configuration settings
-- `extensions.py`: Flask extensions
-- `models.py`: Database models
-- `forms.py`: Form definitions using WTForms
-- `seed_db.py`: Script to populate the database with sample data
-- `routes/`: Directory containing route handlers
-  - `main.py`: Main routes (homepage, search, etc.)
-  - `auth.py`: Authentication routes
-  - `product.py`: Product-related routes
-  - `cart.py`: Shopping cart routes
-- `templates/`: HTML templates
-- `static/`: Static files (CSS, JS, images)
+## 🛠 Troubleshooting
 
-## Screenshots
+❌ *Gunicorn Import Error?*
+```plaintext
+gunicorn.errors.AppImportError: Failed to find attribute 'app' in 'app'.
+```
+✅ Fix: Make sure `app.py` has the following structure:
+```python
+from flask import Flask
 
-[Screenshots will be added here]
+def create_app():
+    app = Flask(__name__)
+    return app
 
-## License
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True)
+```
 
-This project is for educational purposes only. Amazon name and logo are trademarks of Amazon.com, Inc.
+❌ *Database Not Found?*
+```plaintext
+db.sqlite3 does not exist
+```
+✅ Fix: Run `python seed_db.py` to initialize the database.
+
+---
+
+## 🎯 Future Improvements
+
+🚀 **Admin Dashboard** - Manage products & orders easily
+🚀 **Payment Gateway** - Implement Stripe/PayPal
+🚀 **Wishlist Feature** - Save favorite products
+
+
+---
+
+## 🎉 Contributing
+
+We welcome contributions! Follow these steps:
+1. **Fork** the repository
+2. **Create** a new branch (`feature-branch`)
+3. **Commit** your changes (`git commit -m "Added feature XYZ"`)
+4. **Push** to your branch (`git push origin feature-branch`)
+5. **Submit** a Pull Request 🚀
+
+---
+
+## 📜 License
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
+
+---
+
+## 💬 Contact
+For any queries, feel free to reach out!<br>
+📧 **Email:** goyamjain02@gmail.com<br>
+🐦 **Twitter:** [@goyamjain02](https://twitter.com/goyamjain02)<br>
+📌 **GitHub:** [Goyam02](https://github.com/Goyam02)<br>
+
+---
+
+# ⭐ **If you found this project useful, don't forget to give it a star!** ⭐
+
