@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, request
+from flask import Blueprint, render_template, flash, redirect, url_for, request,session
 from flask_login import login_user, logout_user, current_user, login_required
 # from werkzeug.urls import url_parse
 from urllib.parse import urlparse
@@ -28,6 +28,13 @@ def login():
 
         # Log the user in
         login_user(user, remember=form.remember_me.data)
+
+        #Store the user information in session
+        session['user_id'] = user.id
+        session['user_name'] = user.username
+        session['user_email'] = user.email
+        session.permanent = True
+
 
         # Redirect to next page if specified
         next_page = request.args.get('next')
@@ -67,6 +74,7 @@ def register():
 @auth_bp.route('/logout')
 def logout():
     logout_user()
+    session.clear()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.index'))
 
@@ -75,6 +83,11 @@ def logout():
 def profile():
     form = ProfileForm()
     search_form = create_search_form()
+
+    #Access Session data
+    user_id = session.get('user_id')
+    user_name = session.get('user_name')
+    user_email = session.get('user_email')
 
     if form.validate_on_submit():
         # Update user profile
@@ -104,3 +117,7 @@ def profile():
         form.phone.data = current_user.phone
 
     return render_template('auth/profile.html', title='User Profile', form=form , search_form=search_form)
+
+@auth_bp.route('/check-session')
+def check_session():
+    return f"Session Data: (ID: {session.get('user_id')})"

@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,session
 from config import Config
 from extensions import db, migrate, login_manager,csrf
 from models import User
@@ -7,6 +7,12 @@ from utils import create_search_form
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    #Enable session timeout globally
+    @app.before_request
+    def make_session_permanent():
+        session.permanent = True
+        app.permanent_session_lifetime = app.config['PERMANENT_SESSION_LIFETIME']
 
     # Initialize extensions
     db.init_app(app)
